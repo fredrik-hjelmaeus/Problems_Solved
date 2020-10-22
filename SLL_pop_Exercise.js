@@ -53,8 +53,23 @@ class SinglyLinkedList {
     this.length--;
     return removed;
   }
+  get(index) {
+    if (index < 0 || index > this.length) return undefined;
+    let current = this.head;
+    let count = 0;
+    while (index !== count) {
+      current = current.next;
+      count++;
+    }
+    return current;
+  }
 }
 var singlyLinkedList = new SinglyLinkedList();
-const tsest = singlyLinkedList.push(15); // singlyLinkedList
-const test = singlyLinkedList.push(5); // singlyLinkedList
+singlyLinkedList.push(15); // singlyLinkedList
+singlyLinkedList.push(5); // singlyLinkedList
+singlyLinkedList.push(3); // singlyLinkedList
+singlyLinkedList.push(7); // singlyLinkedList
+singlyLinkedList.push(51); // singlyLinkedList
+singlyLinkedList.push(25); // singlyLinkedList
+const test = singlyLinkedList.get(3);
 console.log(test);
