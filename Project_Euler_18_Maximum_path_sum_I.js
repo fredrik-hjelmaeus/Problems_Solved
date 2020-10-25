@@ -102,6 +102,65 @@ class Graph {
   addEdge(v1, v2, weight) {
     this.adjacencyList[v1].push({ node: v2, weight });
   }
+  dijkstraLP(start, end) {
+    const previous = {};
+    const distances = {};
+    const PQ = new PriorityQueue();
+    const list = this.adjacencyList;
+    const path = [];
+    let smallest;
+    let node;
+    let pathSum = [];
+    // build initial state
+    for (let v in list) {
+      if (v === start) {
+        distances[v] = 0;
+        PQ.enqueue(v, 0);
+      } else {
+        distances[v] = Infinity;
+        PQ.enqueue(v, Infinity);
+      }
+      previous[v] = null;
+    }
+    // cycle begins
+    while (PQ.queue.length) {
+      // fetch smallest value in queue,smallest weight in queue
+      node = PQ.dequeue();
+
+      smallest = node.val;
+
+      if (smallest === end) {
+        // we are done
+        // build path to return
+        while (previous[smallest]) {
+          pathSum.push(node.priority);
+          path.push(smallest);
+          smallest = previous[smallest];
+        }
+        break;
+      }
+      if (smallest || distances[smallest] !== Infinity) {
+        for (let neighbor in list[smallest]) {
+          //find neighbor node
+          let nextNode = list[smallest][neighbor];
+          // calculate new distance to neighboring node
+          let candidate = distances[smallest] + nextNode.weight;
+          let nextNeighbor = nextNode.node;
+          // if candidate is smaller , replace
+          if (candidate < distances[nextNeighbor]) {
+            //updating new smallest distance to neighbor
+            distances[nextNeighbor] = candidate;
+            // updating prevois - how we got to neighbor
+            previous[nextNeighbor] = smallest;
+            //enqueue in priority queue with new priority
+            PQ.enqueue(nextNeighbor, candidate);
+          }
+        }
+      }
+    }
+    console.log(pathSum[0] + 3);
+    return path.concat(smallest).reverse();
+  }
   dijkstraSP(start, end) {
     const previous = {};
     const distances = {};
