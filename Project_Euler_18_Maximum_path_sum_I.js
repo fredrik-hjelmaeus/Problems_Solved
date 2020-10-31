@@ -100,7 +100,6 @@ class Graph {
     this.adjacencyList[vertex] = [];
   }
   addEdge(v1, v2, weight) {
-    console.log(v1, v2, weight);
     this.adjacencyList[v1].push({ node: v2, weight });
   }
   dijkstraLP(start, end) {
@@ -123,23 +122,34 @@ class Graph {
       }
       previous[v] = null;
     }
-    console.log(distances);
-    console.log(list);
     // cycle begins
     while (PQ.queue.length) {
       // fetch smallest value in queue,smallest weight in queue
       node = PQ.dequeue();
-
       smallest = node.val;
 
       if (smallest === end) {
-        // we are done
-        // build path to return
+        console.log('new route');
+
+        // we are done, build path to return
         while (previous[smallest]) {
-          pathSum.push(node.priority);
+          // get the path sums
+          const vert = list[previous[smallest]];
+          for (let i = 0; i < vert.length; i++) {
+            if (vert[i].node === smallest) {
+              const weight = vert[i].weight;
+              pathSum.push(weight);
+            }
+          }
           path.push(smallest);
           smallest = previous[smallest];
         }
+        // add second node path to sum
+        list[start].forEach((item) => (item.node === smallest ? pathSum.push(item.weight) : null));
+
+        pathSum.push(75);
+        console.log(pathSum);
+
         break;
       }
       if (smallest || distances[smallest] !== Infinity) {
@@ -161,102 +171,11 @@ class Graph {
         }
       }
     }
-    console.log(pathSum[0] + 3);
-    return path.concat(smallest).reverse();
-  }
-  dijkstraSP(start, end) {
-    const previous = {};
-    const distances = {};
-    const PQ = new PriorityQueue();
-    const list = this.adjacencyList;
-    const path = [];
-    let smallest;
-    let node;
-    let pathSum = [];
-    // build initial state
-    for (let v in list) {
-      if (v === start) {
-        distances[v] = 0;
-        PQ.enqueue(v, 0);
-      } else {
-        distances[v] = Infinity;
-        PQ.enqueue(v, Infinity);
-      }
-      previous[v] = null;
-    }
-
-    // cycle begins
-    while (PQ.queue.length) {
-      // fetch smallest value in queue,smallest weight in queue
-      node = PQ.dequeue();
-
-      smallest = node.val;
-
-      if (smallest === end) {
-        // we are done
-        // build path to return
-        while (previous[smallest]) {
-          pathSum.push(node.priority);
-          path.push(smallest);
-          smallest = previous[smallest];
-        }
-        break;
-      }
-      if (smallest || distances[smallest] !== Infinity) {
-        for (let neighbor in list[smallest]) {
-          //find neighbor node
-          let nextNode = list[smallest][neighbor];
-          // calculate new distance to neighboring node
-          let candidate = distances[smallest] + nextNode.weight;
-          let nextNeighbor = nextNode.node;
-          // if candidate is smaller , replace
-          if (candidate < distances[nextNeighbor]) {
-            //updating new smallest distance to neighbor
-            distances[nextNeighbor] = candidate;
-            // updating prevois - how we got to neighbor
-            previous[nextNeighbor] = smallest;
-            //enqueue in priority queue with new priority
-            PQ.enqueue(nextNeighbor, candidate);
-          }
-        }
-      }
-    }
-    console.log(pathSum[0] + 3);
-    return path.concat(smallest).reverse();
+    return { val: pathSum.reduce((a, b) => a + b, 0), path: path.concat(smallest).concat(start).reverse(), pathSum: pathSum.reverse() };
   }
 }
-// need to take proper steps in add edges phase, rewrite
-const G = new Graph();
-/*G.addVertex('A0');
-G.addVertex('B0');
-G.addVertex('B1');
-G.addEdge('A0', 'B0', 7);
-G.addEdge('A0', 'B1', 4);
-G.addVertex('C0');
-G.addVertex('C1');
-G.addVertex('C2');
-G.addEdge('B0', 'C0', 2);
-G.addEdge('B0', 'C1', 4);
-G.addEdge('B1', 'C1', 4);
-G.addEdge('B1', 'C2', 6);
-G.addVertex('D0');
-G.addVertex('D1');
-G.addVertex('D2');
-G.addVertex('D3');
-G.addEdge('C0', 'D0', 8);
-G.addEdge('C0', 'D1', 5);
-G.addEdge('C1', 'D1', 5);
-G.addEdge('C1', 'D2', 9);
-G.addEdge('C2', 'D2', 9);
-G.addEdge('C2', 'D3', 3);
 
-const test = G.dijkstraLP('A0', 'D0');
-const test2 = G.dijkstraLP('A0', 'D1');
-const test3 = G.dijkstraLP('A0', 'D2');
-const test4 = G.dijkstraLP('A0', 'D3');*/
-//console.log(test, test2, test3, test4);
-//console.log(test);
-// console.log(G.adjacencyList[test[0]].map((n) => n.weight));
+const G = new Graph();
 
 const triangle = `75
 95 64
@@ -278,58 +197,67 @@ const testTriangle = `3
 7 4
 2 4 6
 8 5 9 3`;
-//console.log(triangle.length);
+
 let c = 0;
 const arr = [];
 
-const strTriangle = testTriangle.split('\n');
-//console.log(strTriangle.length);
+const strTriangle = triangle.split('\n');
 
 const splitTriangleByRow = [];
 for (let r = 0; r < strTriangle.length; r++) {
   splitTriangleByRow.push(strTriangle[r].split(' '));
 }
-// console.log(splitTriangleByRow.map((row) => row));
+
 let id = 0;
 for (let r = 0; r < splitTriangleByRow.length; r++) {
   for (let c = 0; c < splitTriangleByRow[r].length; c++) {
-    const newVertex = id.toString() + splitTriangleByRow[r][c];
+    const newVertex = r.toString() + c.toString();
     G.addVertex(newVertex);
-    id++;
-    //  console.log(newVertex);
   }
 }
-otherid = 0;
-id = 0;
+
+let targetID;
+let node;
+let weight;
+let v1;
+let v2;
 for (let r = 0; r < splitTriangleByRow.length - 1; r++) {
   for (let c = 0; c < splitTriangleByRow[r].length; c++) {
-    const newVertex = otherid.toString() + splitTriangleByRow[r][c];
-    otherid++;
-    const newVertexNextRow = id.toString() + splitTriangleByRow[r + 1][c];
-    id++;
-    const newNextVertexNextRow = id.toString() + splitTriangleByRow[r + 1][c + 1];
-    id++;
-    //console.log(splitTriangleByRow[r + 1][c], splitTriangleByRow[r + 1][c + 1]);
-    //console.log(newVertex, newVertexNextRow, newNextVertexNextRow);
-    G.addEdge(newVertex, newVertexNextRow, parseInt(splitTriangleByRow[r + 1][c]));
-    G.addEdge(newVertex, newNextVertexNextRow, parseInt(splitTriangleByRow[r + 1][c + 1]));
-    // console.log('addEdge ' + splitTriangleByRow[r][c] + ',' + splitTriangleByRow[r + 1][c]);
-    // console.log('addEdge ' + splitTriangleByRow[r][c] + ',' + splitTriangleByRow[r + 1][c + 1]);
-    // console.log(splitTriangleByRow[r][c]);
+    // node
+    for (let n = 0; n < 2; n++) {
+      node = splitTriangleByRow[r][c];
+
+      // target node
+      if (c === 0) {
+        weight = splitTriangleByRow[r + 1][c + n];
+        targetID = (r + 1).toString() + (c + n).toString();
+      } else if (c !== splitTriangleByRow[r].length - 1) {
+        weight = splitTriangleByRow[r + 1][c + n];
+        targetID = (r + 1).toString() + (c + n).toString();
+      } else {
+        weight = splitTriangleByRow[r + 1][c + n];
+        targetID = (r + 1).toString() + (c + n).toString();
+      }
+
+      v1 = r.toString() + c.toString();
+      v2 = targetID;
+
+      G.addEdge(v1, v2, parseInt(weight));
+    }
   }
 }
-//console.log('object');
-LPaths = [];
-for (let k in G.adjacencyList) {
-  if (G.adjacencyList[k].length === 0) {
-    //console.log(k);
-    //  LPaths.push(G.dijkstraLP('03', k.toString()));
+
+const PyramidLeafs = [];
+let highestSum = { val: 0, path: null };
+for (let id in G.adjacencyList) {
+  if (G.adjacencyList[id].length === 0) {
+    PyramidLeafs.push(id);
+    const LP = G.dijkstraLP('00', id);
+    if (highestSum.val < LP.val) {
+      highestSum = LP;
+    }
   }
 }
-//console.log(LPaths);
-//console.log(G.adjacencyList);
-const test = G.dijkstraLP('03', '68');
-//const test2 = G.dijkstraLP('A0', 'D1');
-//const test3 = G.dijkstraLP('A0', 'D2');
-//const test4 = G.dijkstraLP('A0', 'D3');
-//console.log(test, test2, test3, test4);
+
+console.log(highestSum);
+console.log(PyramidLeafs);
