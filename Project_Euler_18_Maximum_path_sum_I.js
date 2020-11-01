@@ -122,6 +122,7 @@ class Graph {
       }
       previous[v] = null;
     }
+    //console.log(distances, previous);
     // cycle begins
     while (PQ.queue.length) {
       // fetch smallest value in queue,smallest weight in queue
@@ -129,7 +130,7 @@ class Graph {
       smallest = node.val;
 
       if (smallest === end) {
-        console.log('new route');
+        // console.log('new route');
 
         // we are done, build path to return
         while (previous[smallest]) {
@@ -148,7 +149,7 @@ class Graph {
         list[start].forEach((item) => (item.node === smallest ? pathSum.push(item.weight) : null));
 
         pathSum.push(75);
-        console.log(pathSum);
+        // console.log(pathSum);
 
         break;
       }
@@ -197,9 +198,6 @@ const testTriangle = `3
 7 4
 2 4 6
 8 5 9 3`;
-
-let c = 0;
-const arr = [];
 
 const strTriangle = triangle.split('\n');
 
@@ -260,4 +258,25 @@ for (let id in G.adjacencyList) {
 }
 
 console.log(highestSum);
-console.log(PyramidLeafs);
+//console.log(PyramidLeafs);
+
+/* 
+Dynamic Programming Tabulation approach
+*/
+
+let r = splitTriangleByRow.length - 1;
+let result;
+while (r > 0) {
+  for (let c = 0; c < splitTriangleByRow[r - 1].length; c++) {
+    const first = parseInt(splitTriangleByRow[r - 1][c]) + parseInt(splitTriangleByRow[r][c]);
+    const second = parseInt(splitTriangleByRow[r - 1][c]) + parseInt(splitTriangleByRow[r][c + 1]);
+    if (first > second) {
+      splitTriangleByRow[r - 1][c] = first;
+    } else {
+      splitTriangleByRow[r - 1][c] = second;
+    }
+    result = splitTriangleByRow[r - 1][c];
+  }
+  r--;
+}
+return result;
