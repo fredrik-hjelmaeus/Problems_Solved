@@ -13,7 +13,6 @@ How many Sundays fell on the first of the month during the twentieth century (1 
 */
  
 const week = new Array(7).fill(0);
-console.log(week)
 // parameters
 // leap year
 let Months = {
@@ -31,15 +30,15 @@ let Months = {
     December: 31
 }
 let firstSundays = 0
+const firstSundaysArr = [];
 let leapCounter = 0
 let weekday = 0
 //years
 for(let y = 0;y < 100; y++){
-    console.log('year' + 1111111111111)
+    firstSundaysArr.push([])
     if(leapCounter === 4){
         leapCounter = 0
         Months['February'] = 29
-        console.log('leap')
     }else {
         Months['February'] = 28
     }
@@ -51,14 +50,11 @@ for(let y = 0;y < 100; y++){
             }
             if(d === 1 && weekday === 6){
                 firstSundays++
-                console.log('FIRSTSUNDAY')
+                firstSundaysArr[y].push(`19${y} ${m}`)
             }
-            console.log('year: 19'+y,'month '+m,'days '+d,'weekday '+weekday)
-            //week[weekday] = parseInt(week[weekday])+1
             weekday++
         }
     }
     leapCounter += 1
 }
-console.log(firstSundays)
-
+console.log(firstSundays-1)
