@@ -139,7 +139,6 @@ class SinglyLinkedList {
   rotate(num) {
     let index = 0;
     let removed;
-    let oldTail;
     let oldHead;
     if (num > 0) {
       while (num !== index) {
@@ -160,25 +159,6 @@ class SinglyLinkedList {
     return;
   }
 }
-// 1 - 2 - 3 - 4 - 5
-// 3 - 4 - 5 - 1 - 2
-// 5 - 1 - 2 - 3 - 4
-/* var list = new SinglyLinkedList();
-list.push(5);
-list.push(10);
-list.push(15);
-list.push(20);
-list.push(25);
-console.log(list.head.val); //5
-console.log(list.tail.val); //25
-list.rotate(3);
-console.log(list.head.val); //20
-console.log(list.head.next.val); //25
-console.log(list.head.next.next.val); //5
-console.log(list.head.next.next.next.val); //10
-console.log(list.head.next.next.next.next.val); //15
-console.log(list.tail.val); //15
-console.log(list.tail.next); // null */
 
 var negativelist = new SinglyLinkedList();
 negativelist.push(5);
@@ -187,7 +167,6 @@ negativelist.push(15);
 negativelist.push(20);
 negativelist.push(25);
 
-//negativelist.print();
 console.log(negativelist.head.val); //5
 console.log(negativelist.tail.val); //25
 negativelist.rotate(-1);
@@ -198,5 +177,3 @@ console.log(negativelist.head.next.next.next.val); // 15
 console.log(negativelist.head.next.next.next.next.val); // 20
 console.log(negativelist.tail.val); // 20
 console.log(negativelist.tail.next); // null
-
-//negativelist.print();
