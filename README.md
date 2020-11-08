@@ -1,2 +1,2 @@
 # Problems Solved
-Here i collect problems i solved and exercise solutions.
+Here i collect problems solved and exercise solutions.
