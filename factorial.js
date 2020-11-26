@@ -5,5 +5,5 @@ function factorial(num) {
   return num * factorial(num - 1);
 }
 
-const test = factorial(4);
+const test = factorial(100);
 console.log(test);
